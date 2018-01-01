@@ -27,13 +27,14 @@
       },
       interval: {
         type: Number,
-        default: 4000
+        default: 1000
       }
     },
     data() {
       return {
         dots: [],
-        currentPageIndex: 0
+        currentPageIndex: 0,
+        slide: 0
       }
     },
     mounted() {
@@ -69,7 +70,8 @@
     methods: {
       _setSliderWidth(isResize) {
         this.children = this.$refs.sliderGroup.children
-
+        this.slide = this.children.length
+        
         let width = 0
         let sliderWidth = this.$refs.slider.clientWidth
         for (let i = 0; i < this.children.length; i++) {
@@ -89,22 +91,30 @@
           scrollX: true,
           scrollY: false,
           momentum: false,
-          snap: true,
-          snapLoop: this.loop,
-          snapThreshold: 0.3,
-          snapSpeed: 400
+          snap: {
+            loop: this.loop,
+            threshold: 0.3,
+            speed: 400
+          }
         })
 
         this.slider.on('scrollEnd', () => {
           let pageIndex = this.slider.getCurrentPage().pageX
-          if (this.loop) {
-            pageIndex -= 1
-          }
+          // if (this.loop) {
+          //   pageIndex -= 1
+          // }
           this.currentPageIndex = pageIndex
 
           if (this.autoPlay) {
             this._play()
           }
+
+          if(this.currentPageIndex === this.slide - 1){
+            this.timer = setTimeout(() => {
+              this.slider.goToPage(0, 0, 400)
+            }, this.interval)
+          }
+
         })
 
         this.slider.on('beforeScrollStart', () => {
@@ -118,9 +128,9 @@
       },
       _play() {
         let pageIndex = this.currentPageIndex + 1
-        if (this.loop) {
-          pageIndex += 1
-        }
+        // if (this.loop) {
+        //   pageIndex += 1
+        // }
         this.timer = setTimeout(() => {
           this.slider.goToPage(pageIndex, 0, 400)
         }, this.interval)
