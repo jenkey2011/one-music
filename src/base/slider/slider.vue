@@ -5,7 +5,7 @@
       </slot>
     </div>
     <div class="dots">
-      <span class="dot" :class="{active: currentPageIndex === index }" v-for="(item, index) in dots"></span>
+      <span class="dot" :class="{active: currentPageIndex === index }" v-for="(item, index) in dots" :key="index"></span>
     </div>
   </div>
 </template>
@@ -27,7 +27,7 @@
       },
       interval: {
         type: Number,
-        default: 1000
+        default: 4000
       }
     },
     data() {
