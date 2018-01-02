@@ -15,9 +15,9 @@ export function getRecommend() {
 }
 
 export function getDiscList() {
-  const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg'
+  const url = 'https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg'
   const data = {
-    format:'jsonp',
+    format: 'jsonp',
     g_tk: '1992408038',
     // jsonpCallback: 'recom12778459009225185',
     loginUin: '0',
