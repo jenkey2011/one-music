@@ -1,6 +1,6 @@
 import jsonp from 'common/js/jsonp'
 import {commonParams, options} from './config'
-// import axios from 'axios'
+import axios from 'axios'
 
 export function getRecommend() {
   const url = 'https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg'
@@ -8,27 +8,32 @@ export function getRecommend() {
   const data = Object.assign({}, commonParams, {
     platform: 'h5',
     uin: 0,
-    needNewCode: 1
+    needNewCode: 1,
+    format: 'jsonp'
   })
 
   return jsonp(url, data, options)
 }
 
 export function getDiscList() {
-  const url = 'https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg'
-  const data = {
-    format: 'jsonp',
-    g_tk: '1992408038',
-    // jsonpCallback: 'recom12778459009225185',
-    loginUin: '0',
-    hostUin: '0',
-    format: 'jsonp',
-    inCharset: 'utf8',
-    outCharset: 'utf-8',
-    notice: '0',
+  const url = '/api/getDiscList'
+
+  const data = Object.assign({}, commonParams, {
     platform: 'yqq',
-    needNewCode: '0',
-    data: '{"comm":{"ct":24},"recomPlaylist":{"method":"get_hot_recommend","param":{"async":1,"cmd":2},"module":"playlist.HotRecommendServer"}}'
-  }
-  return jsonp(url, data, options)
+    loginUin: 0,
+    hostUin: 0,
+    sin: 0,
+    ein: 29,
+    sortId: 5,
+    needNewCode: 0,
+    categoryId: 10000000,
+    rnd: Math.random(),
+    picmid: 1,
+    format: 'json'
+  })
+  return axios.get(url, {
+    params: data
+  }).then((res) => {
+    return Promise.resolve(res.data)
+  })
 }
