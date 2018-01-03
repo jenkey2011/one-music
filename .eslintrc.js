@@ -30,11 +30,10 @@ module.exports = {
     'no-mixed-spaces-and-tabs': 0,
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
-
     'space-before-blocks': 0,
     'space-in-parens': 0,
     'space-infix-ops': 0,
     'space-unary-ops': 0,
-    'spaced-comment': 0,
+    'spaced-comment': 0
   }
 }

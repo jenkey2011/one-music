@@ -69,10 +69,12 @@
         })
       },
       imgLoad() {
+
         if(!this.checkLoaded){
           this.$refs.recScroll.refresh()
           this.checkLoaded = true
         }
+        
       }
     },
     components: {
