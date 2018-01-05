@@ -1,7 +1,17 @@
 <template>
-  <scroll class="listview" :data="data">
+  <scroll 
+   @scroll="scroll"
+          :listen-scroll="listenScroll"
+          :probe-type="probeType"
+          :data="data"
+          class="listview"
+          ref="listview"
+    >
     <ul>
-      <li v-for="(group, index) in data" :key="index" class="list-group">
+      <li v-for="(group, index) in data" 
+          :key="index" 
+          class="list-group"
+          ref="listGroup">
         <h2 class="list-group-title">{{ group.title }}</h2>
         <ul>
           <li v-for="item in group.items" :key="item.id" class="list-group-item">
@@ -11,9 +21,13 @@
         </ul>
       </li>
     </ul>
-    <div class="list-shortcut">
+    <div class="list-shortcut" @touchstart.stop.prevent="onShortTouchStart" @touchmove.stop.prevent="onShortTouchMove">
       <ul>
-        <li v-for=" (item,index) in shortcutList " :key="index" class="item">
+        <li v-for=" (item,index) in shortcutList " 
+        :key="index" 
+        class="item" 
+        :data-index="index" 
+        :class="{'current': index === currentIndex}">
           {{ item }}
         </li>
       </ul>
@@ -23,8 +37,22 @@
 
 <script>
 import Scroll from 'base/scroll/scroll'
-
+import {getData} from 'common/js/dom'
+const ANCHOR_HEIGHT = 18
 export default {
+  created() {
+    this.touch = {}
+    this.listenScroll = true
+    this.probeType = 3
+    this.listHeight = []
+  },
+  data() {
+    return {
+      currentIndex: 0,
+      scrollY: -1,
+      scrollX: -1
+    }
+  },
   props: {
     data: {
       type: Array,
@@ -36,6 +64,69 @@ export default {
       return this.data.map((group) => {
         return group.title.substr(0, 1)
       })
+    }
+  },
+  methods: {
+    onShortTouchStart(e) {
+      let anchorIndex = parseInt(getData(e.target, 'index'))
+      if (!anchorIndex && anchorIndex !== 0){
+        return
+      }
+      let firstTouch = e.touches[0]
+      this.touch.y1 = firstTouch.pageY
+      this.touch.anchorIndex = anchorIndex
+      this._scrollTo(anchorIndex)
+    },
+    onShortTouchMove(e) {
+      let firstTouch = e.touches[0]
+      this.touch.y2 = firstTouch.pageY
+      let delta = (this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT | 0
+      let anchorIndex = parseInt(this.touch.anchorIndex) + delta
+      // let anchorIndex = parseInt(this.touch.anchorIndex) + delta < 0 ? 0 : parseInt(this.touch.anchorIndex) + delta 
+      // anchorIndex = anchorIndex > this.$refs.listGroup.length-1 ? this.$refs.listGroup.length-1 : anchorIndex
+      this._scrollTo(anchorIndex)
+    },
+    scroll(pos) {
+      this.scrollY = pos.y
+    },
+    _scrollTo(index){
+      this.currentIndex = index
+      this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0)
+    },
+    _calculatHeight() {
+      this.listHeight = []
+      const list = this.$refs.listGroup
+      let height = 0
+      this.listHeight.push(height)
+      for (let i = 0; i < list.length; i++) {
+        let item = list[i]
+        height += item.clientHeight
+        this.listHeight.push(height)
+      }
+    }
+  },
+  watch: {
+    data() {
+      setTimeout(() => {
+        this._calculatHeight()
+        console.log(this.listHeight)
+      }, 20)
+    },
+    scrollY(newY){
+      const listHeight = this.listHeight
+      for (let i = 0; i < listHeight.length; i++) {
+        let height1 = listHeight[i]
+        let height2 = listHeight[i+1]
+        if (height2 && (-newY > height1 && -newY < height2)) {
+          this.currentIndex = i
+          return
+        }
+      }
+      this.currentIndex = 0
+    },
+    currentIndex(){
+      this.currentIndex = this.currentIndex < 0 ? 0 : this.currentIndex
+      this.currentIndex = this.currentIndex > this.$refs.listGroup.length-1 ? this.$refs.listGroup.length-1 : this.currentIndex
     }
   },
   components: {

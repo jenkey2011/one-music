@@ -30,11 +30,7 @@ export default {
       const vm = this
       getSingerList().then((res) => {
         if (res.code === ERR_OK){
-          // this.singers = this._normalizeSinger(res.data.list)
           vm.singers = vm._normalizeSinger(res.data.list)
-          // this.singers.$set(i,{text:i+1});
-          console.log(vm.singers)
-          console.log(typeof(vm.singers))
         }
       })
     },
