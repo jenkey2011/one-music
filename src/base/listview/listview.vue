@@ -14,7 +14,9 @@
           ref="listGroup">
         <h2 class="list-group-title">{{ group.title }}</h2>
         <ul>
-          <li v-for="item in group.items" :key="item.id" class="list-group-item">
+          <li @click="selectItem(item)"
+           v-for="item in group.items" 
+           :key="item.id" class="list-group-item">
             <img class="avatar" v-lazy="item.avatar" alt="">
             <span class="name">{{ item.name }}</span>
           </li>
@@ -32,13 +34,21 @@
         </li>
       </ul>
     </div>
+    <div class="list-fixed" v-show="fixedTitle" ref="fixed">
+      <h1 class="fixed-title">{{ fixedTitle }}</h1>
+    </div>
+    <loading class="loading-container" v-show="!data.length"></loading>
   </scroll>
 </template>
 
 <script>
 import Scroll from 'base/scroll/scroll'
 import {getData} from 'common/js/dom'
+import Loading from 'base/loading/loading'
+
 const ANCHOR_HEIGHT = 18
+const TITLE_HEIGHT = 30
+
 export default {
   created() {
     this.touch = {}
@@ -50,7 +60,7 @@ export default {
     return {
       currentIndex: 0,
       scrollY: -1,
-      scrollX: -1
+      diff: 0
     }
   },
   props: {
@@ -64,9 +74,18 @@ export default {
       return this.data.map((group) => {
         return group.title.substr(0, 1)
       })
+    },
+    fixedTitle() {
+      if (this.scrollY >= 0){
+        return ''
+      }
+      return this.data[this.currentIndex] ? this.data[this.currentIndex].title : ''
     }
   },
   methods: {
+    selectItem(item) {
+      this.$emit('select', item)
+    },
     onShortTouchStart(e) {
       let anchorIndex = parseInt(getData(e.target, 'index'))
       if (!anchorIndex && anchorIndex !== 0){
@@ -82,8 +101,6 @@ export default {
       this.touch.y2 = firstTouch.pageY
       let delta = (this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT | 0
       let anchorIndex = parseInt(this.touch.anchorIndex) + delta
-      // let anchorIndex = parseInt(this.touch.anchorIndex) + delta < 0 ? 0 : parseInt(this.touch.anchorIndex) + delta 
-      // anchorIndex = anchorIndex > this.$refs.listGroup.length-1 ? this.$refs.listGroup.length-1 : anchorIndex
       this._scrollTo(anchorIndex)
     },
     scroll(pos) {
@@ -109,7 +126,6 @@ export default {
     data() {
       setTimeout(() => {
         this._calculatHeight()
-        console.log(this.listHeight)
       }, 20)
     },
     scrollY(newY){
@@ -119,6 +135,12 @@ export default {
         let height2 = listHeight[i+1]
         if (height2 && (-newY > height1 && -newY < height2)) {
           this.currentIndex = i
+          let diff = height2 + newY
+          if (diff > 0 && diff < TITLE_HEIGHT){
+            this.diff = diff - TITLE_HEIGHT
+          } else {
+            this.diff = 0
+          }
           return
         }
       }
@@ -127,10 +149,14 @@ export default {
     currentIndex(){
       this.currentIndex = this.currentIndex < 0 ? 0 : this.currentIndex
       this.currentIndex = this.currentIndex > this.$refs.listGroup.length-1 ? this.$refs.listGroup.length-1 : this.currentIndex
+    },
+    diff(newVal) {
+      this.$refs.fixed.style.transform = `translate3d(0, ${newVal}px, 0)`
     }
   },
   components: {
-    Scroll
+    Scroll,
+    Loading
   }
 }
 </script>
