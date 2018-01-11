@@ -1,6 +1,7 @@
 <template>
   <div class="music-list">
-    <div class="back">
+    <div class="back"
+         @click="back">
       <i class="icon-back"></i>
     </div>
     <h1 class="title"
@@ -8,6 +9,13 @@
     <div class="bg-image"
          :style="{backgroundImage: bgStyle, paddingTop: bgPaddingTop, zIndex: bgZIndex, transform: bgTransform, filter: bgFilter }"
          ref="bgImage">
+      <div class="play-wrapper"
+           v-show="!bgZIndex">
+        <div class="play">
+          <i class="icon-play"></i>
+          <span class="text">随机播放全部</span>
+        </div>
+      </div>
       <div class="filter"
            ref="filter"></div>
     </div>
@@ -28,8 +36,8 @@
 </template>
 
 <script type="text/ecmascript-6">
-import SongList from 'base/song-list/song-list'
 import Scroll from 'base/scroll/scroll'
+import SongList from 'base/song-list/song-list'
 
 const BAR_HEIGHT = 40
 
@@ -69,6 +77,9 @@ export default {
   methods: {
     scroll (pos) {
       this.scrollY = pos.y
+    },
+    back () {
+      this.$router.back()
     }
   },
   watch: {
