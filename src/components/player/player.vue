@@ -45,6 +45,14 @@
         </scroll> -->
         </div>
         <div class="bottom">
+          <div class="progress-wrapper">
+            <span class="time time-l">{{format(currentTime)}}</span>
+            <div class="progress-bar-wrapper">
+              <process-bar :percent="percent"></process-bar>
+            </div>
+            <span class="time time-r">{{format(currentSong.duration)}}
+            </span>
+          </div>
           <!-- <div class="dot-wrapper">
           <span class="dot"></span>
           <span class="dot"></span>
@@ -84,7 +92,6 @@
       </div>
     </transition>
     <transition name="mini">
-
       <div class="mini-player"
            @click="open"
            v-show="!fullScreen">
@@ -118,16 +125,21 @@
     <audio ref="audio"
            @canplay="ready"
            @error="error"
+           @timeupdate="updateTime"
            :src="currentSong.url"></audio>
   </div>
 </template>
 
 <script>
   import { mapGetters, mapMutations } from 'vuex'
+  import ProcessBar from 'base/process-bar/process-bar'
+
   export default {
     data () {
       return {
-        songReady: false
+        songReady: false,
+        currentTime: 0,
+        percent: 0
       }
     },
     computed: {
@@ -152,6 +164,26 @@
       ])
     },
     methods: {
+      updateTime (e) {
+        this.currentTime = e.target.currentTime
+        this.percent = this.currentTime / this.currentSong.duration
+      },
+      format (interval) {
+        interval = interval | 0
+        let minute = interval / 60 | 0
+        let second = interval % 60
+        // second = second >= 10 ? second : '0' + second
+        second = this._pad(second)
+        return `${minute}:${second}`
+      },
+      _pad (num, n = 2) {
+        let len = num.toString().length
+        while (len < n) {
+          num = '0' + num
+          len++
+        }
+        return num
+      },
       next () {
         if (!this.songReady) {
           return
@@ -213,6 +245,9 @@
           newPlaying ? audio.play() : audio.pause()
         })
       }
+    },
+    components: {
+      ProcessBar
     }
   }
 </script>
@@ -364,13 +399,13 @@
         .progress-wrapper
           display: flex
           align-items: center
-          width: 80%
+          width: 90%
           margin: 0px auto
           padding: 10px 0
           .time
             color: $color-text
-            font-size: $font-size-small
-            flex: 0 0 30px
+            font-size: 10px
+            flex: 0 0 36px
             line-height: 30px
             width: 30px
             &.time-l
