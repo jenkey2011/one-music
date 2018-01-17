@@ -1,8 +1,7 @@
 <template>
   <div>
 
-    <svg width="30"
-         height="30"
+    <svg :style="newStyle11"
          viewbox="0 0 100 100"
          version="1.1"
          xmlns="http://www.w3.org/2000/svg">
@@ -49,6 +48,13 @@
       dashArray () {
         return this.progress
       }
+    },
+    created () {
+      this.newStyle11 = this.newStyle
+
+    },
+    mounted () {
+      this.newStyle11 = this.newStyle
     }
   }
 </script>
