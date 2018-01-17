@@ -48,7 +48,9 @@
           <div class="progress-wrapper">
             <span class="time time-l">{{format(currentTime)}}</span>
             <div class="progress-bar-wrapper">
-              <process-bar :percent="percent"></process-bar>
+              <progress-bar :percent="percent"
+                            @progressChange="progressChange"
+                            @progressChangeEnd="progressChangeEnd"></progress-bar>
             </div>
             <span class="time time-r">{{format(currentSong.duration)}}
             </span>
@@ -108,11 +110,30 @@
              v-html="currentSong.singer"></p>
         </div>
         <div class="control">
+          <progress-circle class="circle-progress"
+                           :new-style="newStyle"></progress-circle>
+          <!-- <svg class="aaa"
+               width="440"
+               height="440"
+               viewBox="0 0 440 440"
+               style="">
+            <circle cx="220"
+                    cy="220"
+                    r="170"
+                    stroke-width="50"
+                    stroke="#D1D3D7"
+                    fill="none"></circle>
+            <circle cx="220"
+                    cy="220"
+                    r="170"
+                    stroke-width="50"
+                    stroke="#00A5E0"
+                    fill="none"
+                    transform="matrix(0,-1,1,0,0,440)"
+                    stroke-dasharray="811.7875416876026 1069"></circle>
+          </svg> -->
           <i :class="miniIcon"
              @click.stop="togglePlayingState"></i>
-          <!-- <progress-circle>
-            <i class="icon-mini"></i>
-          </progress-circle> -->
         </div>
         <div class="control">
           <i class="icon-playlist"></i>
@@ -132,14 +153,16 @@
 
 <script>
   import { mapGetters, mapMutations } from 'vuex'
-  import ProcessBar from 'base/process-bar/process-bar'
+  import ProgressBar from 'base/progress-bar/progress-bar'
+  import ProgressCircle from 'base/progress-circle/progress-circle'
 
   export default {
     data () {
       return {
         songReady: false,
         currentTime: 0,
-        percent: 0
+        percent: 0,
+        newStyle: 'width:30px;height:30px;'
       }
     },
     computed: {
@@ -175,6 +198,17 @@
         // second = second >= 10 ? second : '0' + second
         second = this._pad(second)
         return `${minute}:${second}`
+      },
+      progressChange (newPercent) {
+        this.currentTime = this.currentSong.duration * newPercent
+        this.$refs.audio.currentTime = this.currentTime
+        this.$refs.audio.volume = 0
+      },
+      progressChangeEnd () {
+        this.$refs.audio.volume = 1
+        if (!this.playing) {
+          this.togglePlayingState()
+        }
       },
       _pad (num, n = 2) {
         let len = num.toString().length
@@ -247,12 +281,13 @@
       }
     },
     components: {
-      ProcessBar
+      ProgressBar,
+      ProgressCircle
     }
   }
 </script>
 
-<style scoped lang="stylus" rel="stylesheet/stylus">
+<style scoped  lang="stylus" rel="stylesheet/stylus">
   @import '~common/stylus/variable'
   @import '~common/stylus/mixin'
   .player
@@ -479,6 +514,16 @@
         flex: 0 0 30px
         width: 30px
         padding: 0 10px
+        position: relative
+        // .progress-circle
+        // width: 100%
+        // height: 100%
+        // position: absolute
+        // left: 0
+        // top: 0
+        // svg
+        // width: 30px
+        // height: 30px
         .icon-play-mini, .icon-pause-mini, .icon-playlist
           font-size: 30px
           color: $color-theme-d
@@ -487,6 +532,19 @@
           position: absolute
           left: 0
           top: 0
+  // .progress-circle
+  // position: absolute
+  // left: 0
+  // top: 0
+  // width: 100%
+  // height: 100%
+  .control >>> svg
+    width: 30px
+    height: 30px
+    position: absolute
+    left: 0
+    top: 0
+    background: red
   @keyframes rotate
     0%
       transform: rotate(0)
