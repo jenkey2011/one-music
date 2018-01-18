@@ -111,7 +111,10 @@
         </div>
         <div class="control">
           <progress-circle class="circle-progress"
-                           :new-style="newStyle"></progress-circle>
+                           :new-style="newStyle">
+          </progress-circle>
+          <i :class="miniIcon"
+             @click.stop="togglePlayingState"></i>
           <!-- <svg class="aaa"
                width="440"
                height="440"
@@ -132,8 +135,7 @@
                     transform="matrix(0,-1,1,0,0,440)"
                     stroke-dasharray="811.7875416876026 1069"></circle>
           </svg> -->
-          <i :class="miniIcon"
-             @click.stop="togglePlayingState"></i>
+
         </div>
         <div class="control">
           <i class="icon-playlist"></i>
@@ -193,9 +195,8 @@
       },
       format (interval) {
         interval = interval | 0
-        let minute = interval / 60 | 0
+        let minute = (interval / 60) | 0
         let second = interval % 60
-        // second = second >= 10 ? second : '0' + second
         second = this._pad(second)
         return `${minute}:${second}`
       },
@@ -248,9 +249,7 @@
       ready () {
         this.songReady = true
       },
-      error () {
-
-      },
+      error () { },
 
       back () {
         this.setFullScreen(false)
@@ -515,15 +514,6 @@
         width: 30px
         padding: 0 10px
         position: relative
-        // .progress-circle
-        // width: 100%
-        // height: 100%
-        // position: absolute
-        // left: 0
-        // top: 0
-        // svg
-        // width: 30px
-        // height: 30px
         .icon-play-mini, .icon-pause-mini, .icon-playlist
           font-size: 30px
           color: $color-theme-d
@@ -532,19 +522,16 @@
           position: absolute
           left: 0
           top: 0
-  // .progress-circle
-  // position: absolute
-  // left: 0
-  // top: 0
-  // width: 100%
-  // height: 100%
-  .control >>> svg
-    width: 30px
-    height: 30px
-    position: absolute
-    left: 0
-    top: 0
-    background: red
+  .control
+    .circle-progress
+      width: 30px
+      height: 30px
+      position: absolute
+      left: 0
+      top: 0
+      >>> svg
+        width: 30px
+        height: 30px
   @keyframes rotate
     0%
       transform: rotate(0)

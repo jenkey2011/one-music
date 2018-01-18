@@ -34,55 +34,52 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import Slider from 'base/slider/slider'
-  import {getRecommend, getDiscList} from 'api/recommend'
-  import {ERR_OK} from 'api/config'
-  import Scroll from 'base/scroll/scroll'
-  import Loading from 'base/loading/loading'
-  
-  export default {
-    data() {
-      return {
-        recommends: [],
-        discList: [],
-        checkLoaded: false
-      }
-    },
-    created() {
-      this._getRecommend()
-      this._getDiscList()
-    },
-    methods: {
+import Slider from 'base/slider/slider'
+import { getRecommend, getDiscList } from 'api/recommend'
+import { ERR_OK } from 'api/config'
+import Scroll from 'base/scroll/scroll'
+import Loading from 'base/loading/loading'
 
-      _getRecommend() {
-        getRecommend().then((res) => {
-          if (res.code === ERR_OK) {
-            this.recommends = res.data.slider
-          }
-        })
-      },
-      _getDiscList() {
-        getDiscList().then((res) => {
-          if (res.code === ERR_OK) {
-            this.discList = res.data.list
-          }
-        })
-      },
-      imgLoad() {
-
-        if(!this.checkLoaded){
-          this.$refs.recScroll.refresh()
-          this.checkLoaded = true
-        }
-        
-      }
-    },
-    components: {
-      Slider,
-      Scroll,
-      Loading
+export default {
+  data() {
+    return {
+      recommends: [],
+      discList: [],
+      checkLoaded: false
     }
+  },
+  created() {
+    this._getRecommend()
+    this._getDiscList()
+  },
+  methods: {
+    _getRecommend() {
+      getRecommend().then(res => {
+        if (res.code === ERR_OK) {
+          this.recommends = res.data.slider
+        }
+      })
+    },
+    _getDiscList() {
+      getDiscList().then(res => {
+        if (res.code === ERR_OK) {
+          this.discList = res.data.list
+        }
+      })
+    },
+    imgLoad() {
+      if (!this.checkLoaded) {
+        this.$refs.recScroll.refresh()
+        this.checkLoaded = true
+      }
+    }
+  },
+  components: {
+    Slider,
+    Scroll,
+    Loading
   }
+}
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">

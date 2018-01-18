@@ -1,7 +1,7 @@
 <template>
   <div>
-
-    <svg :style="newStyle11"
+    <svg width="10"
+         height="10"
          viewbox="0 0 100 100"
          version="1.1"
          xmlns="http://www.w3.org/2000/svg">
@@ -46,21 +46,13 @@
     },
     computed: {
       dashArray () {
-        return this.progress
+        return 60
       }
-    },
-    created () {
-      this.newStyle11 = this.newStyle
-
-    },
-    mounted () {
-      this.newStyle11 = this.newStyle
     }
   }
 </script>
 <style scoped lang="stylus">
   @import '~common/stylus/variable'
   svg
-    width: 30px
-    height: 30px
+    transform: scale(0.9)
 </style>
