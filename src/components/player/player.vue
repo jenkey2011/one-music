@@ -110,9 +110,6 @@
              v-html="currentSong.singer"></p>
         </div>
         <div class="control">
-          <progress-circle class="circle-progress"
-                           :new-style="newStyle">
-          </progress-circle>
           <i :class="miniIcon"
              @click.stop="togglePlayingState"></i>
           <!-- <svg class="aaa"
@@ -149,6 +146,7 @@
            @canplay="ready"
            @error="error"
            @timeupdate="updateTime"
+           @ended="end"
            :src="currentSong.url"></audio>
   </div>
 </template>
@@ -156,7 +154,6 @@
 <script>
   import { mapGetters, mapMutations } from 'vuex'
   import ProgressBar from 'base/progress-bar/progress-bar'
-  import ProgressCircle from 'base/progress-circle/progress-circle'
 
   export default {
     data () {
@@ -239,6 +236,9 @@
         }
         this.toggleSongs(index)
       },
+      end () {
+        this.next()
+      },
       toggleSongs (index) {
         this.setCurrentIndex(index)
         if (!this.playing) {
@@ -270,6 +270,7 @@
       currentSong () {
         this.$nextTick(() => {
           this.$refs.audio.play()
+          this.currentSong.getLyric()
         })
       },
       playing (newPlaying) {
@@ -280,8 +281,7 @@
       }
     },
     components: {
-      ProgressBar,
-      ProgressCircle
+      ProgressBar
     }
   }
 </script>
