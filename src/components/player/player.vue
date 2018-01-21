@@ -34,15 +34,19 @@
             <div class="playing-lyric"> </div>
           </div> -->
           </div>
-          <!-- <scroll class="middle-r"
+          <scroll class="middle-r"
                 ref="lyricList">
           <div class="lyric-wrapper">
             <div>
               <p ref="lyricLine"
-                 class="text"> </p>
+                 class="text"
+                 v-for="(line,index) in lineNode"
+                 :key="index"
+                 :class="{'current': index === lineIndex}"
+                 >{{line}}</p>
             </div>
           </div>
-        </scroll> -->
+        </scroll>
         </div>
         <div class="bottom">
           <div class="progress-wrapper">
@@ -152,138 +156,181 @@
 </template>
 
 <script>
-  import { mapGetters, mapMutations } from 'vuex'
-  import ProgressBar from 'base/progress-bar/progress-bar'
+import { mapGetters, mapMutations } from 'vuex'
+import ProgressBar from 'base/progress-bar/progress-bar'
+import Scroll from 'base/scroll/scroll'
 
-  export default {
-    data () {
-      return {
-        songReady: false,
-        currentTime: 0,
-        percent: 0,
-        newStyle: 'width:30px;height:30px;'
+export default {
+  data() {
+    return {
+      songReady: false,
+      currentTime: 0,
+      percent: 0,
+      newStyle: 'width:30px;height:30px;',
+      timeNode: [],
+      lineNode: [],
+      lineIndex: 0
+    }
+  },
+  computed: {
+    cdCls() {
+      return this.playing ? 'play' : 'play pause'
+    },
+    playIcon() {
+      return this.playing ? 'icon-pause' : 'icon-play'
+    },
+    miniIcon() {
+      return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
+    },
+    disableCls() {
+      return this.songReady ? '' : 'disable'
+    },
+    ...mapGetters([
+      'fullScreen',
+      'playlist',
+      'currentSong',
+      'playing',
+      'currentIndex'
+    ])
+  },
+  methods: {
+    updateTime(e) {
+      this.currentTime = e.target.currentTime
+      this.percent = this.currentTime / this.currentSong.duration
+      this._getIndex(this.currentTime)
+    },
+    format(interval) {
+      interval = interval | 0
+      let minute = (interval / 60) | 0
+      let second = interval % 60
+      second = this._pad(second)
+      return `${minute}:${second}`
+    },
+    progressChange(newPercent) {
+      this.currentTime = this.currentSong.duration * newPercent
+      this.$refs.audio.currentTime = this.currentTime
+      this.$refs.audio.volume = 0
+    },
+    progressChangeEnd() {
+      this.$refs.audio.volume = 1
+      if (!this.playing) {
+        this.togglePlayingState()
       }
     },
-    computed: {
-      cdCls () {
-        return this.playing ? 'play' : 'play pause'
-      },
-      playIcon () {
-        return this.playing ? 'icon-pause' : 'icon-play'
-      },
-      miniIcon () {
-        return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
-      },
-      disableCls () {
-        return this.songReady ? '' : 'disable'
-      },
-      ...mapGetters([
-        'fullScreen',
-        'playlist',
-        'currentSong',
-        'playing',
-        'currentIndex'
-      ])
+    _pad(num, n = 2) {
+      let len = num.toString().length
+      while (len < n) {
+        num = '0' + num
+        len++
+      }
+      return num
     },
-    methods: {
-      updateTime (e) {
-        this.currentTime = e.target.currentTime
-        this.percent = this.currentTime / this.currentSong.duration
-      },
-      format (interval) {
-        interval = interval | 0
-        let minute = (interval / 60) | 0
-        let second = interval % 60
-        second = this._pad(second)
-        return `${minute}:${second}`
-      },
-      progressChange (newPercent) {
-        this.currentTime = this.currentSong.duration * newPercent
-        this.$refs.audio.currentTime = this.currentTime
-        this.$refs.audio.volume = 0
-      },
-      progressChangeEnd () {
-        this.$refs.audio.volume = 1
-        if (!this.playing) {
-          this.togglePlayingState()
-        }
-      },
-      _pad (num, n = 2) {
-        let len = num.toString().length
-        while (len < n) {
-          num = '0' + num
-          len++
-        }
-        return num
-      },
-      next () {
-        if (!this.songReady) {
-          return
-        }
-        let index = this.currentIndex + 1
-        if (index === this.currentIndex.length) {
-          index = 0
-        }
-        this.toggleSongs(index)
-      },
-      prev () {
-        if (!this.songReady) {
-          return
-        }
-        let index = this.currentIndex - 1
-        if (index === -1) {
-          index = this.currentIndex.length - 1
-        }
-        this.toggleSongs(index)
-      },
-      end () {
-        this.next()
-      },
-      toggleSongs (index) {
-        this.setCurrentIndex(index)
-        if (!this.playing) {
-          this.togglePlayingState()
-        }
-        this.songReady = false
-      },
-      ready () {
-        this.songReady = true
-      },
-      error () { },
+    next() {
+      if (!this.songReady) {
+        return
+      }
+      let index = this.currentIndex + 1
+      if (index === this.currentIndex.length) {
+        index = 0
+      }
+      this.toggleSongs(index)
+    },
+    prev() {
+      if (!this.songReady) {
+        return
+      }
+      let index = this.currentIndex - 1
+      if (index === -1) {
+        index = this.currentIndex.length - 1
+      }
+      this.toggleSongs(index)
+    },
+    end() {
+      this.next()
+    },
+    toggleSongs(index) {
+      this.setCurrentIndex(index)
+      if (!this.playing) {
+        this.togglePlayingState()
+      }
+      this.songReady = false
+    },
+    ready() {
+      this.songReady = true
+    },
+    error() {},
 
-      back () {
-        this.setFullScreen(false)
-      },
-      open () {
-        this.setFullScreen(true)
-      },
-      togglePlayingState () {
-        this.setPlayingState(!this.playing)
-      },
-      ...mapMutations({
-        setFullScreen: 'SET_FULL_SCREEN',
-        setPlayingState: 'SET_PLAYING_STATE',
-        setCurrentIndex: 'SET_CURRENT_INDEX'
+    back() {
+      this.setFullScreen(false)
+    },
+    open() {
+      this.setFullScreen(true)
+    },
+    togglePlayingState() {
+      this.setPlayingState(!this.playing)
+    },
+    ...mapMutations({
+      setFullScreen: 'SET_FULL_SCREEN',
+      setPlayingState: 'SET_PLAYING_STATE',
+      setCurrentIndex: 'SET_CURRENT_INDEX'
+    }),
+    _getIndex(newTime) {
+      let timeArray = this.timeNode
+      for (let i = 0; i < timeArray.length; i++) {
+        let prev = timeArray[i]
+        let next = timeArray[i + 1]
+        if (prev <= newTime && next >= newTime) {
+          this.lineIndex = i
+          return
+        }
+        if (!next && newTime > 10) {
+          this.lineIndex = i
+          return
+        }
+      }
+    },
+    _scrollToCurrentLine(index) {
+      let lyrics = this.$refs.lyricLine
+      let elementFirst = lyrics[0]
+      if (index > 5) {
+        let element = lyrics[index - 5]
+        this.$refs.lyricList.scrollToElement(element, 500)
+      } else {
+        this.$refs.lyricList.scrollToElement(elementFirst, 500)
+      }
+    }
+  },
+  watch: {
+    currentSong() {
+      this.$nextTick(() => {
+        this.$refs.audio.play()
+        this.currentSong.getLyric().then(lyric => {
+          this.timeNode = lyric.timeArr
+          this.lineNode = lyric.lineArr
+        })
+        // let vm = this
+        // setTimeout(() => {
+        //   // self.$set('dataObj.info', data);
+        //   vm.timeNode = vm.currentSong.timeNode
+        //   vm.lineNode = this.currentSong.lineNode
+        // }, 200)
       })
     },
-    watch: {
-      currentSong () {
-        this.$nextTick(() => {
-          this.$refs.audio.play()
-          this.currentSong.getLyric()
-        })
-      },
-      playing (newPlaying) {
-        const audio = this.$refs.audio
-        this.$nextTick(() => {
-          newPlaying ? audio.play() : audio.pause()
-        })
-      }
+    playing(newPlaying) {
+      const audio = this.$refs.audio
+      this.$nextTick(() => {
+        newPlaying ? audio.play() : audio.pause()
+      })
     },
-    components: {
-      ProgressBar
+    lineIndex(index) {
+      this._scrollToCurrentLine(index)
     }
+  },
+  components: {
+    ProgressBar,
+    Scroll
   }
+}
 </script>
 
 <style scoped  lang="stylus" rel="stylesheet/stylus">
@@ -356,6 +403,7 @@
         transform-origin: 40px 530px
         .middle-l
           display: inline-block
+          display:none
           vertical-align: top
           position: relative
           width: 100%
@@ -410,7 +458,8 @@
               color: $color-text-l
               font-size: $font-size-medium
               &.current
-                color: $color-text
+                // color: $color-text
+                color: #31c27c
       .bottom
         position: absolute
         bottom: 50px
