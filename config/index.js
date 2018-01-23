@@ -6,16 +6,15 @@ const path = require('path')
 
 module.exports = {
   dev: {
-
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
       '/api/getDiscList': {
         target: 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg',
-        bypass: function (req, res, proxyOptions) {
-          req.headers.referer = 'https://c.y.qq.com';
-          req.headers.host = 'c.y.qq.com';
+        bypass: function(req, res, proxyOptions) {
+          req.headers.referer = 'https://c.y.qq.com'
+          req.headers.host = 'c.y.qq.com'
         },
         pathRewrite: {
           '^/api/getDiscList': ''
@@ -23,9 +22,9 @@ module.exports = {
       },
       '/api/lyric': {
         target: 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg',
-        bypass: function (req, res, proxyOptions) {
-          req.headers.referer = 'https://c.y.qq.com';
-          req.headers.host = 'c.y.qq.com';
+        bypass: function(req, res, proxyOptions) {
+          req.headers.referer = 'https://c.y.qq.com'
+          req.headers.host = 'c.y.qq.com'
         },
         pathRewrite: {
           '^/api/lyric': ''
@@ -61,7 +60,7 @@ module.exports = {
     // https://vue-loader.vuejs.org/en/options.html#cachebusting
     cacheBusting: true,
 
-    cssSourceMap: true,
+    cssSourceMap: true
   },
 
   build: {
