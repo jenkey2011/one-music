@@ -11,10 +11,10 @@
          ref="bgImage">
       <div class="play-wrapper"
            v-show="!bgZIndex">
-        <div class="play">
+        <!-- <div class="play">
           <i class="icon-play"></i>
           <span class="text">随机播放全部</span>
-        </div>
+        </div> -->
       </div>
       <div class="filter"
            ref="filter"></div>
@@ -222,6 +222,7 @@
       background: $color-background
       .song-list-wrapper
         padding: 20px 30px
+        padding-bottom: 60px
       .loading-container
         position: absolute
         width: 100%

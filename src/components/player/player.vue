@@ -35,9 +35,11 @@
                      :src="currentSong.image">
               </div>
             </div>
-            <!-- <div class="playing-lyric-wrapper">
-            <div class="playing-lyric"> </div>
-          </div> -->
+            <div class="playing-lyric-wrapper">
+              <div class="playing-lyric">{{lineNode[lineIndex-1]}}</div>
+              <div class="playing-lyric active">{{lineNode[lineIndex]}}</div>
+              <div class="playing-lyric">{{lineNode[lineIndex+1]}}</div>
+            </div>
           </div>
           <scroll class="middle-r"
                   :class="{show:lyricShow,transition:isTranstion}"
@@ -57,8 +59,10 @@
         </div>
         <div class="bottom">
           <div class="dot-wrapper">
-            <span class="dot"></span>
-            <span class="dot"></span>
+            <span class="dot"
+                  :class="{'active':!lyricShow}"></span>
+            <span class="dot"
+                  :class="{'active':lyricShow}"></span>
           </div>
           <div class="progress-wrapper">
             <span class="time time-l">{{format(currentTime)}}</span>
@@ -190,7 +194,7 @@
     },
     computed: {
       transformLyricX () {
-        let percent = this.lyricX * 100 / this.lyricMoveData.wrapperWidth + this.nowTranslateX
+        let percent = this.lyricX * 120 / this.lyricMoveData.wrapperWidth + this.nowTranslateX
         this.opacity = 1 - percent / -100
         this.translatePercent = Math.max(-100, percent)
         return `translateX(${this.translatePercent}%)`
@@ -356,12 +360,6 @@
             this.timeNode = lyric.timeArr
             this.lineNode = lyric.lineArr
           })
-          // let vm = this
-          // setTimeout(() => {
-          //   // self.$set('dataObj.info', data);
-          //   vm.timeNode = vm.currentSong.timeNode
-          //   vm.lineNode = this.currentSong.lineNode
-          // }, 200)
         })
       },
       playing (newPlaying) {
@@ -486,10 +484,11 @@
             overflow: hidden
             text-align: center
             .playing-lyric
-              height: 20px
-              line-height: 20px
+              line-height: 1.8
               font-size: $font-size-medium
               color: $color-text-l
+              &.active
+                color: $color-text
         .middle-r
           display: inline-block
           vertical-align: top
@@ -500,9 +499,9 @@
             transition: all 0.5s
           // transition: all 0.1s
           &.show
-            transform: translateX(-100%) !important
+            transform: translateX(-100%)
           &.noshow
-            transform: translateX(0%) !important
+            transform: translateX(0%)
           .lyric-wrapper
             width: 80%
             margin: 0 auto
@@ -513,8 +512,8 @@
               color: $color-text-l
               font-size: $font-size-medium
               &.current
-                // color: $color-text
-                color: #31c27c
+                color: $color-text
+                // color: #31c27c
       .bottom
         position: absolute
         bottom: 50px

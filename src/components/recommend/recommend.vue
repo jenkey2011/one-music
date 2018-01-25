@@ -1,12 +1,20 @@
 <template>
-  <div class="recommend" ref="recommend">
-    <scroll ref="recScroll" class="recommend-content" :data="discList">
+  <div class="recommend"
+       ref="recommend">
+    <scroll ref="recScroll"
+            class="recommend-content"
+            :data="discList">
       <div>
-        <div v-if="recommends.length" class="slider-wrapper" ref="sliderWrapper">
+        <div v-if="recommends.length"
+             class="slider-wrapper"
+             ref="sliderWrapper">
           <slider>
-            <div v-for="item in recommends" :key="item.id">
+            <div v-for="item in recommends"
+                 :key="item.id">
               <a href="javascript:;">
-                <img class="needsclick" @load="imgLoad" :src="item.picUrl">
+                <img class="needsclick"
+                     @load="imgLoad"
+                     :src="item.picUrl">
               </a>
             </div>
           </slider>
@@ -14,19 +22,26 @@
         <div class="recommend-list">
           <h1 class="list-title">热门歌单推荐</h1>
           <ul>
-            <li class="item" v-for="item in discList" :key="item.dissid">
+            <li class="item"
+                v-for="item in discList"
+                :key="item.dissid">
               <div class="icon">
-                <img v-lazy="item.imgurl" width="60" height="60">
+                <img v-lazy="item.imgurl"
+                     width="60"
+                     height="60">
               </div>
               <div class="text">
-                <h2 class="name" v-html="item.creator.name"></h2>
-                <p class="desc" v-html="item.dissname"></p>
+                <h2 class="name"
+                    v-html="item.creator.name"></h2>
+                <p class="desc"
+                   v-html="item.dissname"></p>
               </div>
             </li>
           </ul>
         </div>
       </div>
-      <div class="loading-container" v-show="!discList.length">
+      <div class="loading-container"
+           v-show="!discList.length">
         <loading title="玩命加载中……"></loading>
       </div>
     </scroll>
@@ -34,57 +49,56 @@
 </template>
 
 <script type="text/ecmascript-6">
-import Slider from 'base/slider/slider'
-import { getRecommend, getDiscList } from 'api/recommend'
-import { ERR_OK } from 'api/config'
-import Scroll from 'base/scroll/scroll'
-import Loading from 'base/loading/loading'
+  import Slider from 'base/slider/slider'
+  import { getRecommend, getDiscList } from 'api/recommend'
+  import { ERR_OK } from 'api/config'
+  import Scroll from 'base/scroll/scroll'
+  import Loading from 'base/loading/loading'
 
-export default {
-  data() {
-    return {
-      recommends: [],
-      discList: [],
-      checkLoaded: false
-    }
-  },
-  created() {
-    this._getRecommend()
-    this._getDiscList()
-  },
-  methods: {
-    _getRecommend() {
-      getRecommend().then(res => {
-        if (res.code === ERR_OK) {
-          this.recommends = res.data.slider
-        }
-      })
-    },
-    _getDiscList() {
-      getDiscList().then(res => {
-        if (res.code === ERR_OK) {
-          this.discList = res.data.list
-        }
-      })
-    },
-    imgLoad() {
-      if (!this.checkLoaded) {
-        this.$refs.recScroll.refresh()
-        this.checkLoaded = true
+  export default {
+    data () {
+      return {
+        recommends: [],
+        discList: [],
+        checkLoaded: false
       }
+    },
+    created () {
+      this._getRecommend()
+      this._getDiscList()
+    },
+    methods: {
+      _getRecommend () {
+        getRecommend().then(res => {
+          if (res.code === ERR_OK) {
+            this.recommends = res.data.slider
+          }
+        })
+      },
+      _getDiscList () {
+        getDiscList().then(res => {
+          if (res.code === ERR_OK) {
+            this.discList = res.data.list
+          }
+        })
+      },
+      imgLoad () {
+        if (!this.checkLoaded) {
+          this.$refs.recScroll.refresh()
+          this.checkLoaded = true
+        }
+      }
+    },
+    components: {
+      Slider,
+      Scroll,
+      Loading
     }
-  },
-  components: {
-    Slider,
-    Scroll,
-    Loading
   }
-}
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-  @import "~common/stylus/variable"
-
+  @import '~common/stylus/variable'
   .recommend
     position: fixed
     width: 100%
@@ -98,6 +112,7 @@ export default {
         width: 100%
         overflow: hidden
       .recommend-list
+        padding-bottom: 60px
         .list-title
           height: 65px
           line-height: 65px
