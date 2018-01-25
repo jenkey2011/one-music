@@ -41,6 +41,7 @@
               <div class="playing-lyric">{{lineNode[lineIndex+1]}}</div>
             </div>
           </div>
+
           <scroll class="middle-r"
                   :class="{show:lyricShow,transition:isTranstion}"
                   ref="lyricList"
@@ -74,16 +75,6 @@
             <span class="time time-r">{{format(currentSong.duration)}}
             </span>
           </div>
-
-          <!-- 
-        <div class="progress-wrapper">
-          <span class="time time-l"> </span>
-          <div class="progress-bar-wrapper">
-            <progress-bar :percent="percent"
-                          @percentChange="onProgressBarChange"></progress-bar>
-          </div>
-          <span class="time time-r">{{format(currentSong.duration)}}</span>
-        </div> -->
           <div class="operators">
             <div class="icon i-left">
               <i class="icon-sequence"></i>
@@ -129,27 +120,6 @@
         <div class="control">
           <i :class="miniIcon"
              @click.stop="togglePlayingState"></i>
-          <!-- <svg class="aaa"
-               width="440"
-               height="440"
-               viewBox="0 0 440 440"
-               style="">
-            <circle cx="220"
-                    cy="220"
-                    r="170"
-                    stroke-width="50"
-                    stroke="#D1D3D7"
-                    fill="none"></circle>
-            <circle cx="220"
-                    cy="220"
-                    r="170"
-                    stroke-width="50"
-                    stroke="#00A5E0"
-                    fill="none"
-                    transform="matrix(0,-1,1,0,0,440)"
-                    stroke-dasharray="811.7875416876026 1069"></circle>
-          </svg> -->
-
         </div>
         <div class="control">
           <i class="icon-playlist"></i>

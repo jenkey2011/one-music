@@ -12,7 +12,7 @@ module.exports = {
     proxyTable: {
       '/api/getDiscList': {
         target: 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg',
-        bypass: function(req, res, proxyOptions) {
+        bypass: function (req, res, proxyOptions) {
           req.headers.referer = 'https://c.y.qq.com'
           req.headers.host = 'c.y.qq.com'
         },
@@ -22,12 +22,24 @@ module.exports = {
       },
       '/api/lyric': {
         target: 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg',
-        bypass: function(req, res, proxyOptions) {
+        bypass: function (req, res, proxyOptions) {
           req.headers.referer = 'https://c.y.qq.com'
           req.headers.host = 'c.y.qq.com'
         },
         pathRewrite: {
           '^/api/lyric': ''
+        }
+      },
+      '/api/cdInfo': {
+        target: 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg',
+        bypass: function (req, res, proxyOptions) {
+          req.headers.referer = 'https://c.y.qq.com'
+          req.headers.host = 'c.y.qq.com'
+          // req.headers.dnt = 1
+          // req.headers.authority = 'c.y.qq.com'
+        },
+        pathRewrite: {
+          '^/api/cdInfo': ''
         }
       }
     },

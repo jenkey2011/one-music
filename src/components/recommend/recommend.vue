@@ -3,6 +3,7 @@
        ref="recommend">
     <scroll ref="recScroll"
             class="recommend-content"
+            :click="true"
             :data="discList">
       <div>
         <div v-if="recommends.length"
@@ -23,6 +24,7 @@
           <h1 class="list-title">热门歌单推荐</h1>
           <ul>
             <li class="item"
+                @click="selectItem(item)"
                 v-for="item in discList"
                 :key="item.dissid">
               <div class="icon">
@@ -45,6 +47,7 @@
         <loading title="玩命加载中……"></loading>
       </div>
     </scroll>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -54,6 +57,7 @@
   import { ERR_OK } from 'api/config'
   import Scroll from 'base/scroll/scroll'
   import Loading from 'base/loading/loading'
+  import { mapMutations } from 'vuex'
 
   export default {
     data () {
@@ -68,6 +72,12 @@
       this._getDiscList()
     },
     methods: {
+      selectItem (item) {
+        this.$router.push({
+          path: `/recommend/${item.dissid}`
+        })
+        this.setDisc(item)
+      },
       _getRecommend () {
         getRecommend().then(res => {
           if (res.code === ERR_OK) {
@@ -87,7 +97,10 @@
           this.$refs.recScroll.refresh()
           this.checkLoaded = true
         }
-      }
+      },
+      ...mapMutations({
+        setDisc: 'SET_DISC'
+      })
     },
     components: {
       Slider,
