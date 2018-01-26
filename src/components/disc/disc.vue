@@ -11,8 +11,14 @@
   import { mapGetters } from 'vuex'
   import { getCdInfo } from 'api/recommend'
   import { ERR_OK } from 'api/config'
+  import { createSong } from 'common/js/song'
 
   export default {
+    data () {
+      return {
+        songs: []
+      }
+    },
     computed: {
       title () {
         return this.disc.dissname
@@ -32,12 +38,25 @@
     },
     methods: {
       _getCdInfo () {
+        if (!this.disc.dissid) {
+          return
+        }
         getCdInfo(this.disc.dissid).then((res) => {
-          console.log(res)
           if (res.code === ERR_OK) {
-            this.songs = res.data
+            let list = res.cdlist[0].songlist
+            this.songs = this._normalizeSongs(list)
           }
         })
+      },
+      _normalizeSongs (list) {
+        let ret = []
+        list.forEach((musicData) => {
+          // let { musicData } = item
+          if (musicData.songid && musicData.albummid) {
+            ret.push(createSong(musicData))
+          }
+        })
+        return ret
       }
     }
   }
