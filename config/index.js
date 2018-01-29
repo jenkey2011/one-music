@@ -38,8 +38,6 @@ module.exports = {
             res.req.query.disstid
           }.html`
           req.headers.host = 'c.y.qq.com'
-          // req.headers.dnt = 1
-          // req.headers.authority = 'c.y.qq.com'
         },
         pathRewrite: {
           '^/api/cdInfo': ''
