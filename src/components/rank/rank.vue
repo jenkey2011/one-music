@@ -1,10 +1,11 @@
 <template>
   <div class="rank"
        ref="rank">
-    <div class="toplist"
-         ref="toplist">
+    <scroll class="toplist"
+            ref="toplist">
       <ul>
         <li class="item"
+            @click="selectList(item)"
             v-for="(item,index) in toplist"
             :key="index">
           <div class="icon">
@@ -26,7 +27,7 @@
            v-show="!toplist.length">
         <loading></loading>
       </div>
-    </div>
+    </scroll>
     <router-view></router-view>
   </div>
 </template>
@@ -35,6 +36,8 @@
   import { getTopList } from 'api/rank'
   import { ERR_OK } from 'api/config'
   import Loading from 'base/loading/loading'
+  import Scroll from 'base/scroll/scroll'
+  import { mapMutations } from 'vuex'
 
   export default {
     data () {
@@ -46,17 +49,26 @@
       this._getTopList()
     },
     methods: {
+      selectList (item) {
+        this.$router.push({
+          path: `/rank/${item.id}`
+        })
+        this.setTopList(item)
+      },
       _getTopList () {
         getTopList().then((res) => {
           if (res.code === ERR_OK) {
             this.toplist = res.data.topList
-            console.log(this.toplist)
           }
         })
-      }
+      },
+      ...mapMutations({
+        setTopList: 'SET_TOP_LIST'
+      })
     },
     components: {
-      Loading
+      Loading,
+      Scroll
     }
   }
 </script>
@@ -72,6 +84,8 @@
     .toplist
       height: 100%
       overflow: hidden
+      ul
+        padding-bottom: 60px
       .item
         display: flex
         margin: 0 20px

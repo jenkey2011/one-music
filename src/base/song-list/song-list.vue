@@ -5,6 +5,10 @@
           @click="selectItem(song,index)"
           v-for="(song, index) in songs"
           :key="index">
+        <div class="rank"
+             v-if="rank">
+          <span> {{ index + 1 }} </span>
+        </div>
         <div class="content">
           <h2 class="name">{{song.name}}</h2>
           <p class="desc">{{getDesc(song)}}</p>
@@ -20,6 +24,10 @@
       songs: {
         type: Array,
         default: []
+      },
+      rank: {
+        type: Boolean,
+        default: false
       }
     },
     methods: {
@@ -38,21 +46,33 @@
   @import '~common/stylus/mixin'
   .song-list
     .item
-      display flex
-      align-items center
-      box-sizing border-box
-      height 64px
-      font-size $font-size-medium
+      display: flex
+      align-items: center
+      box-sizing: border-box
+      height: 64px
+      font-size: $font-size-medium
+      &:nth-child(1)
+        .rank
+          font-size: $font-size-large
+          color: $color-rank-g
+      &:nth-child(2)
+        .rank
+          font-size: $font-size-large
+          color: $color-rank-s
+      &:nth-child(3)
+        .rank
+          font-size: $font-size-large
+          color: $color-rank-c
       .rank
-        flex 0 0 25px
-        width 25px
-        margin-right 30px
-        text-align center
+        flex: 0 0 25px
+        width: 25px
+        margin-right: 30px
+        text-align: center
         .icon
-          display inline-block
-          width 25px
-          height 24px
-          background-size 25px 24px
+          display: inline-block
+          width: 25px
+          height: 24px
+          background-size: 25px 24px
           &.icon0
             bg-image('first')
           &.icon1
@@ -60,17 +80,17 @@
           &.icon2
             bg-image('third')
         .text
-          color $color-theme
-          font-size $font-size-large
+          color: $color-theme
+          font-size: $font-size-large
       .content
-        flex 1
-        line-height 20px
-        overflow hidden
+        flex: 1
+        line-height: 20px
+        overflow: hidden
         .name
           no-wrap()
-          color $color-text
+          color: $color-text
         .desc
           no-wrap()
-          margin-top 4px
-          color $color-text-d
+          margin-top: 4px
+          color: $color-text-d
 </style>
