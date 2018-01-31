@@ -1,10 +1,12 @@
 <template>
   <div class="search">
     <div class="search-box-wrapper">
-      <search-box :fromHotKey="fromHotKey"></search-box>
+      <search-box :fromHotKey="fromHotKey"
+                  @query="queryChange"></search-box>
     </div>
     <div ref="shortcutWrapper"
-         class="shortcut-wrapper">
+         class="shortcut-wrapper"
+         v-show="!fromHotKey">
       <div ref="shortcut"
            class="shortcut">
         <div>
@@ -19,21 +21,12 @@
               </li>
             </ul>
           </div>
-          <!-- <div class="search-history"
-               v-show="searchHistory.length">
-            <h1 class="title">
-              <span class="text">搜索历史</span>
-              <span @click="showConfirm"
-                    class="clear">
-                <i class="icon-clear"></i>
-              </span>
-            </h1>
-            <search-list @delete="deleteSearchHistory"
-                         @select="addQuery"
-                         :searches="searchHistory"></search-list>
-          </div> -->
         </div>
       </div>
+    </div>
+    <div class="search-result"
+         v-show="fromHotKey">
+      <suggest :query="fromHotKey"></suggest>
     </div>
   </div>
 </template>
@@ -42,6 +35,8 @@
   import SearchBox from 'base/search-box/search-box'
   import { getHotKey } from 'api/search'
   import { ERR_OK } from 'api/config'
+  import Suggest from 'components/suggest/suggest'
+
   export default {
     data () {
       return {
@@ -56,6 +51,9 @@
       addQuery (key) {
         this.fromHotKey = key
       },
+      queryChange (query) {
+        this.fromHotKey = query
+      },
       _getHotKey () {
         getHotKey().then((res) => {
           if (res.code === ERR_OK) {
@@ -65,7 +63,8 @@
       }
     },
     components: {
-      SearchBox
+      SearchBox,
+      Suggest
     }
   }
 </script>

@@ -14,7 +14,7 @@ export default class Song {
     this.url = url
   }
 
-  getLyric() {
+  getLyric () {
     if (this.lyric) {
       return
     }
@@ -39,7 +39,7 @@ export default class Song {
   }
 }
 
-function _getLine(list) {
+function _getLine (list) {
   let lyricData = { timeArr: [], lineArr: [] }
   const timeReg = /\[[^\]]+\]/g
   const dotReg = /\[|\]/g
@@ -61,7 +61,7 @@ function _getLine(list) {
   return lyricData
 }
 
-export function createSong(musicData) {
+export function createSong (musicData) {
   return new Song({
     id: musicData.songid,
     mid: musicData.songmid,
@@ -71,7 +71,7 @@ export function createSong(musicData) {
     duration: musicData.interval,
     image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${
       musicData.albummid
-    }.jpg?max_age=2592000`,
+      }.jpg?max_age=2592000`,
     // 这里是使用的songmid
     // url: `http://thirdparty.gtimg.com/C100${musicData.songmid}.m4a?fromtag=38`
     //url: `http://isure.stream.qqmusic.qq.com/C100${musicData.songmid}.m4a?fromtag=32`
@@ -79,7 +79,7 @@ export function createSong(musicData) {
   })
 }
 
-function filterSinger(singer) {
+export function filterSinger (singer) {
   let ret = []
   if (!singer) {
     return ''
