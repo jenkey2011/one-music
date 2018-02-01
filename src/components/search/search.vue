@@ -28,6 +28,7 @@
          v-show="fromHotKey">
       <suggest :query="fromHotKey"></suggest>
     </div>
+    <router-view></router-view>
   </div>
 </template>
 
