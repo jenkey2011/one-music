@@ -28,6 +28,10 @@
       pullUp: {
         type: Boolean,
         default: false
+      },
+      beforeScroll: {
+        type: Boolean,
+        default: false
       }
     },
     mounted () {
@@ -40,10 +44,12 @@
         if (!this.$refs.wrapper) {
           return
         }
+
         this.scroll = new BScroll(this.$refs.wrapper, {
           probeType: this.probeType,
           click: this.click
         })
+
         if (this.listenScroll) {
           let me = this
           this.scroll.on('scroll', (pos) => {
@@ -57,6 +63,12 @@
             if (this.scroll.y <= this.scroll.maxScrollY + 50) {
               me.$emit('scrollToEnd')
             }
+          })
+        }
+        if (this.beforeScroll) {
+          let me = this
+          this.scroll.on('beforeScrollStart', () => {
+            me.$emit('beforeScroll')
           })
         }
       },

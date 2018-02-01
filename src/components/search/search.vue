@@ -2,13 +2,15 @@
   <div class="search">
     <div class="search-box-wrapper">
       <search-box :fromHotKey="fromHotKey"
+                  ref="searchBox"
                   @query="queryChange"></search-box>
     </div>
     <div ref="shortcutWrapper"
          class="shortcut-wrapper"
          v-show="!fromHotKey">
-      <div ref="shortcut"
-           class="shortcut">
+      <scroll ref="shortcut"
+              :data="searchList"
+              class="shortcut">
         <div>
           <div class="hot-key">
             <h1 class="title">热门搜索</h1>
@@ -21,13 +23,26 @@
               </li>
             </ul>
           </div>
+          <div class="search-history"
+               v-show="searchList.length">
+            <h1 class="title">
+              <span class="text">搜索历史</span>
+              <span class="clear">
+                <i class="icon-clear"></i>
+              </span>
+            </h1>
+            <search-history :searchHistory="searchList"></search-history>
+          </div>
         </div>
-      </div>
+
+      </scroll>
     </div>
     <div class="search-result"
          v-show="fromHotKey">
-      <suggest :query="fromHotKey"></suggest>
+      <suggest :query="fromHotKey"
+               @beforeScroll="blurInput"></suggest>
     </div>
+
     <router-view></router-view>
   </div>
 </template>
@@ -37,23 +52,33 @@
   import { getHotKey } from 'api/search'
   import { ERR_OK } from 'api/config'
   import Suggest from 'components/suggest/suggest'
+  import SearchHistory from 'base/search-history/search-history'
+  import Scroll from 'base/scroll/scroll'
+
+  // const HISTORY_KEY = 'SEARCH_HISTORY'
 
   export default {
     data () {
       return {
         hotKey: [],
-        fromHotKey: ''
+        fromHotKey: '',
+        searchList: ['aaa']
       }
     },
     created () {
       this._getHotKey()
     },
     methods: {
+      update () {
+      },
       addQuery (key) {
         this.fromHotKey = key
       },
       queryChange (query) {
         this.fromHotKey = query
+      },
+      blurInput () {
+        this.$refs.searchBox.blur()
       },
       _getHotKey () {
         getHotKey().then((res) => {
@@ -65,7 +90,9 @@
     },
     components: {
       SearchBox,
-      Suggest
+      Suggest,
+      SearchHistory,
+      Scroll
     }
   }
 </script>

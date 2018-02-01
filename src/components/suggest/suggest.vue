@@ -3,7 +3,9 @@
           class="suggest"
           :pullUp="pullUp"
           :data="result"
-          @scrollToEnd="searchMore">
+          :beforeScroll="beforeScroll"
+          @scrollToEnd="searchMore"
+          @beforeScroll="lisenScroll">
     <ul class="suggest-list">
       <li class="suggest-item"
           @click="selectItem(item, index)"
@@ -56,6 +58,7 @@
         result: [],
         pullUp: true,
         hasMore: true,
+        beforeScroll: true,
         page: 1
       }
     },
@@ -87,6 +90,7 @@
         this.$refs.suggest.scrollTo(0, 0)
         this.hasMore = true
         this._search()
+        this.$emit('search', this.query)
       },
       searchMore () {
         if (!this.hasMore) {
@@ -94,6 +98,9 @@
         }
         this.page++
         this._search()
+      },
+      lisenScroll () {
+        this.$emit('beforeScroll')
       },
       _search () {
         search(this.query, this.page, this.showSinger, perpage).then((res) => {

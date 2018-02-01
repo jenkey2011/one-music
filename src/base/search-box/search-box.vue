@@ -4,6 +4,7 @@
     <input ref="query"
            v-model="query"
            class="box"
+           @focus="isOnfocus = true"
            :placeholder="placeholder" />
     <i @click="clear"
        v-show="query"
@@ -13,6 +14,8 @@
 
 <script type="text/ecmascript-6">
   import { debounce } from 'common/js/util'
+
+  // const HISTORY_KEY = 'SEARCH_HISTORY'
 
   export default {
     props: {
@@ -27,7 +30,9 @@
     },
     data () {
       return {
-        query: ''
+        query: '',
+        isOnfocus: false,
+        queryList: []
       }
     },
     created () {
@@ -38,6 +43,15 @@
     methods: {
       clear () {
         this.query = ''
+      },
+      // onFocus () {
+      //   this.isOnfocus = true
+      // },
+      blur () {
+        if (this.isOnfocus) {
+          this.$refs.query.blur()
+          this.isOnfocus = false
+        }
       }
     },
     watch: {

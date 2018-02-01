@@ -27,3 +27,30 @@ export function throttle(fn, delta, context) {
     }
   }
 }
+
+// export function cache(key) {
+//   let STORAGE_KEY = key
+//   let todoStorage = {
+//     fetch: function() {
+//       var todos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+//       todos.forEach(function(todo, index) {
+//         todo.id = index
+//       })
+//       todoStorage.uid = todos.length
+//       return todos
+//     },
+//     save: function(todos) {
+//       localStorage.setItem(STORAGE_KEY, JSON.stringify(todos))
+//     }
+//   }
+// }
+
+export const history = {
+  get: function(key) {
+    let list = JSON.parse(localStorage.getItem(key) || '[]')
+    return list
+  },
+  save: function(key, list) {
+    localStorage.setItem(key, JSON.stringify(list))
+  }
+}
