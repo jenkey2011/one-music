@@ -40,6 +40,7 @@
     <div class="search-result"
          v-show="fromHotKey">
       <suggest :query="fromHotKey"
+               @search="updateHistoryList"
                @beforeScroll="blurInput"></suggest>
     </div>
 
@@ -54,7 +55,7 @@
   import Suggest from 'components/suggest/suggest'
   import SearchHistory from 'base/search-history/search-history'
   import Scroll from 'base/scroll/scroll'
-
+  import { mapGetters } from 'vuex'
   // const HISTORY_KEY = 'SEARCH_HISTORY'
 
   export default {
@@ -62,14 +63,16 @@
       return {
         hotKey: [],
         fromHotKey: '',
-        searchList: ['aaa']
+        searchList: []
       }
     },
     created () {
       this._getHotKey()
     },
     methods: {
-      update () {
+      updateHistoryList () {
+        this.searchList = this.searchHistoryList
+        // console.log(this.searchHistoryList)
       },
       addQuery (key) {
         this.fromHotKey = key
@@ -87,6 +90,11 @@
           }
         })
       }
+    },
+    computed: {
+      ...mapGetters([
+        'searchHistoryList'
+      ])
     },
     components: {
       SearchBox,

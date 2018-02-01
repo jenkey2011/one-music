@@ -38,8 +38,10 @@
   import { createSong } from 'common/js/song'
   import { mapMutations, mapActions } from 'vuex'
   import Singer from 'common/js/singer'
+  import { history } from 'common/js/util'
 
   const TYPE_SINGER = 'singer'
+  const HISTORY_KEY = 'HISTORY'
   const perpage = 20
 
   export default {
@@ -59,8 +61,12 @@
         pullUp: true,
         hasMore: true,
         beforeScroll: true,
-        page: 1
+        page: 1,
+        historyList: []
       }
+    },
+    created () {
+      // this.historyList = history.get(HISTORY_KEY)
     },
     methods: {
       selectItem (item, index) {
@@ -90,7 +96,11 @@
         this.$refs.suggest.scrollTo(0, 0)
         this.hasMore = true
         this._search()
-        this.$emit('search', this.query)
+        this.$emit('search')
+        this.historyList.push(this.query)
+        let list = this.historyList
+        history.save(HISTORY_KEY, list)
+        this.setSearchHistory(list)
       },
       searchMore () {
         if (!this.hasMore) {
@@ -150,7 +160,8 @@
         return ret
       },
       ...mapMutations({
-        setSinger: 'SET_SINGER'
+        setSinger: 'SET_SINGER',
+        setSearchHistory: 'SET_SEARCH_HISTORY'
       }),
       ...mapActions([
         'selectPlay'

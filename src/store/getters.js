@@ -23,3 +23,7 @@ export const disc = state => {
 export const topList = state => {
   return state.topList
 }
+
+export const searchHistoryList = state => {
+  return state.searchHistoryList
+}
